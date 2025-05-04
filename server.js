@@ -20,23 +20,22 @@ app.post('/ask', async (req, res) => {
   }
 
   try {
-    const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        model: 'gpt-3.5-turbo',
-        messages: [
-          { role: 'system', content: 'あなたは日本語で丁寧に返答するアシスタントです。' },
-          { role: 'user', content: prompt }
-        ],
-        project: 'proj_proj_tUpHUYofS4k7CFqDWRuy5k0L' // ← ここに実際のProject IDを入れる
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
+const response = await axios.post(
+  'https://api.openai.com/v1/chat/completions',
+  {
+    model: 'gpt-3.5-turbo',
+    messages: [
+      { role: 'system', content: 'あなたは日本語で丁寧に返答するアシスタントです。' },
+      { role: 'user', content: prompt }
+    ]
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      'Content-Type': 'application/json'
+    }
+  }
+);
 
     console.log('✅ OpenAI応答:', response.data);
     res.json({ reply: response.data.choices[0].message.content });
