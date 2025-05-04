@@ -6,9 +6,18 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('🌐 COLDRAW ChatGPTサーバーは稼働中です ✅');
+});
+
 app.post('/ask', async (req, res) => {
   const prompt = req.body.prompt;
-  if (!prompt) return res.status(400).json({ error: 'プロンプトが必要です' });
+  console.log('📩 受信プロンプト:', prompt);  // ログ追加
+
+  if (!prompt) {
+    console.log('⚠️ プロンプトが空です');
+    return res.status(400).json({ error: 'プロンプトが必要です' });
+  }
 
   try {
     const response = await axios.post(
@@ -27,8 +36,12 @@ app.post('/ask', async (req, res) => {
         }
       }
     );
+
+    console.log('✅ OpenAI応答:', response.data);  // ログ追加
     res.json({ reply: response.data.choices[0].message.content });
+
   } catch (err) {
+    console.error('❌ API呼び出し失敗:', err.response?.data || err.message);  // 詳細表示
     res.status(500).json({ error: 'API呼び出しに失敗しました' });
   }
 });
