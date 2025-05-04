@@ -23,7 +23,7 @@ app.post('/ask', async (req, res) => {
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
-        model: 'gpt-4',
+        model: 'gpt-3.5-turbo',
         messages: [
           { role: 'system', content: 'あなたは日本語で丁寧に返答するアシスタントです。' },
           { role: 'user', content: prompt }
