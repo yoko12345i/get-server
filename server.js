@@ -28,6 +28,7 @@ app.post('/ask', async (req, res) => {
           { role: 'system', content: 'あなたは日本語で丁寧に返答するアシスタントです。' },
           { role: 'user', content: prompt }
         ]
+        // project: 'proj_XXXX...' ← 必要ならここに追記（今は不要でもOK）
       },
       {
         headers: {
@@ -37,9 +38,8 @@ app.post('/ask', async (req, res) => {
       }
     );
 
-    console.log('✅ OpenAI応答（全文）:', JSON.stringify(response.data, null, 2));
-    const reply = response.data.choices?.[0]?.message?.content || '返答が取得できませんでした';
-    res.json({ reply });
+    console.log('✅ OpenAI応答:', JSON.stringify(response.data, null, 2));
+    res.json({ reply: response.data.choices?.[0]?.message?.content || '返答が取得できませんでした' });
 
   } catch (err) {
     console.error('❌ API呼び出し失敗:', err.response?.data || err.message);
