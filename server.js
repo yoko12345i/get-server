@@ -3,6 +3,7 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 
 dotenv.config();
+console.log('✅ 環境変数ロード完了', process.env.OPENAI_API_KEY);
 const app = express();
 app.use(express.json());
 
