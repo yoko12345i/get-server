@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
 
 app.post('/ask', async (req, res) => {
   const prompt = req.body.prompt;
-  console.log('📩 受信プロンプト:', prompt);  // ログ追加
+  console.log('📩 受信プロンプト:', prompt);
 
   if (!prompt) {
     console.log('⚠️ プロンプトが空です');
@@ -27,7 +27,8 @@ app.post('/ask', async (req, res) => {
         messages: [
           { role: 'system', content: 'あなたは日本語で丁寧に返答するアシスタントです。' },
           { role: 'user', content: prompt }
-        ]
+        ],
+        project: 'proj_proj_tUpHUYofS4k7CFqDWRuy5k0L' // ← ここに実際のProject IDを入れる
       },
       {
         headers: {
@@ -37,11 +38,11 @@ app.post('/ask', async (req, res) => {
       }
     );
 
-    console.log('✅ OpenAI応答:', response.data);  // ログ追加
+    console.log('✅ OpenAI応答:', response.data);
     res.json({ reply: response.data.choices[0].message.content });
 
   } catch (err) {
-    console.error('❌ API呼び出し失敗:', err.response?.data || err.message);  // 詳細表示
+    console.error('❌ API呼び出し失敗:', err.response?.data || err.message);
     res.status(500).json({ error: 'API呼び出しに失敗しました' });
   }
 });
