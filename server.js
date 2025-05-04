@@ -20,25 +20,26 @@ app.post('/ask', async (req, res) => {
   }
 
   try {
-const response = await axios.post(
-  'https://api.openai.com/v1/chat/completions',
-  {
-    model: 'gpt-3.5-turbo',
-    messages: [
-      { role: 'system', content: 'あなたは日本語で丁寧に返答するアシスタントです。' },
-      { role: 'user', content: prompt }
-    ]
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json'
-    }
-  }
-);
+    const response = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model: 'gpt-3.5-turbo',
+        messages: [
+          { role: 'system', content: 'あなたは日本語で丁寧に返答するアシスタントです。' },
+          { role: 'user', content: prompt }
+        ]
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
 
-    console.log('✅ OpenAI応答:', response.data);
-    res.json({ reply: response.data.choices[0].message.content });
+    console.log('✅ OpenAI応答（全文）:', JSON.stringify(response.data, null, 2));
+    const reply = response.data.choices?.[0]?.message?.content || '返答が取得できませんでした';
+    res.json({ reply });
 
   } catch (err) {
     console.error('❌ API呼び出し失敗:', err.response?.data || err.message);
