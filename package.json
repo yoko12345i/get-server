@@ -1,12 +1,13 @@
 {
-  "name": "get-desktop",
+  "name": "ishii-shop",
   "version": "1.0.0",
-  "main": "index.js",
+  "type": "module",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "keywords": [],
+  "keywords": ["フリマ", "出品", "AI", "石井ショップ"],
   "author": "",
   "license": "ISC",
   "repository": {

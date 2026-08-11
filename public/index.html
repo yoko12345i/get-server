@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ff5a5f" />
+  <title>石井ショップ｜スマホで撮るだけフリマ出品</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-logo">🏪</span>
+      <span class="brand-name">石井ショップ</span>
+    </div>
+    <p class="brand-tagline">撮るだけで、売れる。</p>
+  </header>
+
+  <nav class="tabbar">
+    <button class="tab active" data-view="sell">📷 出品する</button>
+    <button class="tab" data-view="shop">🛍️ ショップ</button>
+  </nav>
+
+  <main>
+    <!-- ============ 出品ビュー ============ -->
+    <section id="view-sell" class="view active">
+      <div class="hero">
+        <h1>不用品を、スマホで撮るだけ。</h1>
+        <p>写真や動画を撮るだけで、AIが商品情報を自動で作成します。あとは出品ボタンを押すだけ。</p>
+      </div>
+
+      <div class="capture-buttons">
+        <label class="capture-btn">
+          <span class="capture-icon">📸</span>
+          <span>写真をとる</span>
+          <input type="file" id="photo-input" accept="image/*" capture="environment" multiple hidden />
+        </label>
+        <label class="capture-btn">
+          <span class="capture-icon">🎥</span>
+          <span>動画をとる</span>
+          <input type="file" id="video-input" accept="video/*" capture="environment" hidden />
+        </label>
+      </div>
+
+      <div id="previews" class="previews"></div>
+
+      <div id="hint-box" class="hint-box hidden">
+        <label for="hint">補足メモ（任意）</label>
+        <input type="text" id="hint" placeholder="例: ○○年に購入 / 動作確認済み など" />
+        <button id="analyze-btn" class="primary-btn">
+          <span class="btn-icon">✨</span> AIにおまかせで商品情報をつくる
+        </button>
+      </div>
+
+      <div id="analyzing" class="analyzing hidden">
+        <div class="spinner"></div>
+        <p>石井店長が査定中です…</p>
+      </div>
+
+      <!-- 生成結果フォーム -->
+      <form id="product-form" class="product-form hidden">
+        <h2>できあがった商品情報</h2>
+        <p class="form-note">気になるところは自由に直せます。</p>
+
+        <label>商品名
+          <input type="text" id="f-title" maxlength="40" required />
+        </label>
+
+        <div class="row">
+          <label>価格（円）
+            <input type="number" id="f-price" min="100" step="100" required />
+          </label>
+          <label>カテゴリ
+            <input type="text" id="f-category" />
+          </label>
+        </div>
+
+        <label>状態
+          <input type="text" id="f-condition" />
+        </label>
+
+        <label>商品説明
+          <textarea id="f-description" rows="5"></textarea>
+        </label>
+
+        <label>タグ（カンマ区切り）
+          <input type="text" id="f-tags" placeholder="中古, お買い得" />
+        </label>
+
+        <p id="price-reason" class="price-reason"></p>
+
+        <div class="form-actions">
+          <button type="button" id="cancel-btn" class="ghost-btn">やり直す</button>
+          <button type="submit" id="list-btn" class="primary-btn">この内容で出品する</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ ショップビュー ============ -->
+    <section id="view-shop" class="view">
+      <div class="shop-head">
+        <h1>石井ショップ</h1>
+        <p id="shop-count">読み込み中…</p>
+      </div>
+      <div id="grid" class="grid"></div>
+      <div id="empty" class="empty hidden">
+        <p>🕳️ まだ商品がありません。</p>
+        <p>「出品する」から、おうちの不用品を出品してみましょう！</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- 商品詳細モーダル -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-card">
+      <button id="modal-close" class="modal-close">✕</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- トースト -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
