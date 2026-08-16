@@ -1,14 +1,53 @@
 import express from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 dotenv.config();
-console.log('✅ 環境変数ロード完了', process.env.OPENAI_API_KEY);
+console.log('✅ 環境変数ロード完了');
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const PUBLIC_DIR = path.join(__dirname, 'public');
+
 const app = express();
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('🌐 COLDRAW ChatGPTサーバーは稼働中です ✅');
+/* ------------------------------------------------------------
+   UNDERCURRENT — Consumer Experience Prototype
+   静的ファイルと、SPAシェルへのフォールバック
+   ------------------------------------------------------------ */
+
+// 設計ドキュメント（プロトタイプのフッターから参照）
+app.use('/docs', express.static(path.join(__dirname, 'docs'), { extensions: ['md'] }));
+
+// css / js / index.html
+app.use(express.static(PUBLIC_DIR));
+
+// プロトタイプの画面パス。クライアント側の router が pathname で分岐する
+const APP_ROUTES = [
+  '/',
+  '/creators',
+  '/creator',
+  '/pass',
+  '/experiences',
+  '/experience',
+  '/table',
+  '/lab',
+  '/me',
+  '/share'
+];
+
+app.get(APP_ROUTES, (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
+
+/* ------------------------------------------------------------
+   API
+   ------------------------------------------------------------ */
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: '🌐 COLDRAW ChatGPTサーバーは稼働中です ✅' });
 });
 
 app.post('/ask', async (req, res) => {
@@ -29,7 +68,6 @@ app.post('/ask', async (req, res) => {
           { role: 'system', content: 'あなたは日本語で丁寧に返答するアシスタントです。' },
           { role: 'user', content: prompt }
         ]
-        // project: 'proj_XXXX...' ← 必要ならここに追記（今は不要でもOK）
       },
       {
         headers: {
@@ -48,7 +86,13 @@ app.post('/ask', async (req, res) => {
   }
 });
 
+// 未知のパスは 404 のままシェルを返し、クライアント側で 404 画面を描画する
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ サーバーが http://localhost:${PORT} で起動しました`);
+  console.log(`🌐 UNDERCURRENT プロトタイプ: http://localhost:${PORT}/`);
 });
