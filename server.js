@@ -4,6 +4,14 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 console.log('✅ 環境変数ロード完了', process.env.OPENAI_API_KEY);
+// プロジェクト単位のAPIキーを使う場合のみ設定（未設定ならヘッダーを送らない）
+const OPENAI_PROJECT_ID = process.env.OPENAI_PROJECT_ID?.trim() || '';
+console.log(
+  OPENAI_PROJECT_ID
+    ? `✅ OpenAIプロジェクトID設定済み: ${OPENAI_PROJECT_ID}`
+    : '⚠️ OpenAIプロジェクトIDは未設定です（デフォルトプロジェクトを使用します）'
+);
+
 const app = express();
 app.use(express.json());
 
@@ -29,12 +37,12 @@ app.post('/ask', async (req, res) => {
           { role: 'system', content: 'あなたは日本語で丁寧に返答するアシスタントです。' },
           { role: 'user', content: prompt }
         ]
-        // project: 'proj_XXXX...' ← 必要ならここに追記（今は不要でもOK）
       },
       {
         headers: {
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...(OPENAI_PROJECT_ID ? { 'OpenAI-Project': OPENAI_PROJECT_ID } : {})
         }
       }
     );
