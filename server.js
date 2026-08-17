@@ -1,14 +1,22 @@
 import express from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 console.log('✅ 環境変数ロード完了', process.env.OPENAI_API_KEY);
 const app = express();
 app.use(express.json());
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// 🌐 COLDRAW Executive Dining Network — スマートフォン向けWebプロトタイプ
+// 静的ファイルのみ。OPENAI_API_KEY が無くても /dining は完全に動作します。
+app.use('/dining', express.static(path.join(__dirname, 'public')));
+
 app.get('/', (req, res) => {
-  res.send('🌐 COLDRAW ChatGPTサーバーは稼働中です ✅');
+  res.send('🌐 COLDRAW ChatGPTサーバーは稼働中です ✅ / Dining Network プロトタイプ: /dining');
 });
 
 app.post('/ask', async (req, res) => {
@@ -51,4 +59,5 @@ app.post('/ask', async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ サーバーが http://localhost:${PORT} で起動しました`);
+  console.log(`🌐 Dining Network プロトタイプ: http://localhost:${PORT}/dining/`);
 });

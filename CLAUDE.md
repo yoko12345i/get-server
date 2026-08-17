@@ -26,14 +26,39 @@ Without `OPENAI_API_KEY`, the server still starts but every call to `POST /ask` 
 
 ## Architecture
 
-Everything is in `server.js`:
+The repo holds two independent things: the original OpenAI proxy in `server.js`, and a
+self-contained front-end prototype under `public/`.
+
+### Server (`server.js`)
 
 - `GET /` — health-check route, returns a static confirmation string.
+- `/dining/*` — static mount of `public/` (the Executive Dining Network prototype).
 - `POST /ask` — takes `{ prompt: string }` in the JSON body, forwards it to `https://api.openai.com/v1/chat/completions` via `axios` using model `gpt-3.5-turbo`, with a hardcoded Japanese system prompt ("あなたは日本語で丁寧に返答するアシスタントです。" — "You are an assistant that replies politely in Japanese"). The reply text is extracted from `response.data.choices[0].message.content` and returned as `{ reply }`.
   - Returns `400` if `prompt` is missing.
   - Returns `500` with a generic Japanese error message if the OpenAI call fails (the underlying error is only logged server-side, not sent to the client).
 
 There is no routing/controller/service layering — if this grows, that's a structural decision to make deliberately rather than something to infer from existing patterns.
+
+### Prototype (`public/`)
+
+A mobile-first hash-routed SPA for the COLDRAW Executive Dining Network, served at `/dining/`.
+No build step, no dependencies, no server state — it never calls `POST /ask` and works without
+`OPENAI_API_KEY`. See `PROTOTYPE.md` for the screen map, the KPI it exists to measure, and the
+self-evaluation.
+
+- `public/js/data.js` — fictional restaurant fixtures, matching, constraint assessment.
+- `public/js/art.js` — procedural SVG imagery (no photographs of real places).
+- `public/js/store.js` — localStorage state and event instrumentation.
+- `public/js/app.js` — router and all screens.
+
+Two rules to preserve when editing it:
+
+1. **Disclosure, not certification.** COLDRAW may state verified facts only about its own Nature
+   Packs / Nature Cocktails (`kind: 'coldraw'`). Anything about a restaurant's own menu is
+   `kind: 'reported'` and is shown dated. Never add copy that certifies a restaurant as vegan,
+   halal or allergen-free.
+2. **All venue data is fictional and must stay that way** — no unverified claims about real
+   restaurants or chefs.
 
 ## Conventions
 
