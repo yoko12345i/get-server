@@ -19,10 +19,11 @@ The server reads config via `dotenv`, so a `.env` file (gitignored) is required 
 
 ```
 OPENAI_API_KEY=sk-...
-PORT=3000   # optional, defaults to 3000
+PORT=3000                    # optional, defaults to 3000
+OPENAI_PROJECT_ID=proj_...   # optional, sent as the OpenAI-Project header when set
 ```
 
-Without `OPENAI_API_KEY`, the server still starts but every call to `POST /ask` will fail against the OpenAI API.
+Without `OPENAI_API_KEY`, the server still starts but every call to `POST /ask` will fail against the OpenAI API. `OPENAI_PROJECT_ID` is only needed when the key must be scoped to a specific OpenAI project; leave it out and the request goes to the key's default project.
 
 ## Architecture
 
