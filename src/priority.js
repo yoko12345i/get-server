@@ -6,7 +6,14 @@ const KEYWORD_RULES = [
     key: 'critical',
     weight: 28,
     label: '緊急を示す語句',
-    words: ['至急', '大至急', '緊急', '今すぐ', '本日中', '今日中', '即時', '障害', 'サービス停止', 'ダウンして', 'インシデント', 'クレーム', 'asap', 'urgent', 'critical', 'outage', 'p0', 'p1']
+    words: ['至急', '大至急', '緊急', '今すぐ', '本日中', '今日中', '即時', 'asap', 'urgent', 'critical', 'p0', 'p1']
+  },
+  {
+    // 放置したときの損失が大きい話題。緊急語と重なると「本当に今やるべき案件」として浮上する
+    key: 'impact',
+    weight: 16,
+    label: '影響の大きい話題',
+    words: ['障害', 'サービス停止', 'ダウンして', 'インシデント', 'クレーム', '本番', '顧客', '取引先', '請求', '支払い', '入金', '契約', '解約', 'セキュリティ', '情報漏洩', '不具合', 'outage', 'incident', 'production', 'customer', 'invoice', 'payment', 'security', 'breach']
   },
   {
     key: 'deadline',
@@ -19,6 +26,13 @@ const KEYWORD_RULES = [
     weight: 9,
     label: '依頼・確認の語句',
     words: ['お願いします', 'お願いいたします', 'お願い', 'ご確認', '確認して', 'ご返信', '返信ください', '回答', '承認', 'レビュー', '依頼', 'いただけますか', 'いただけると', 'please', 'could you', 'review', 'approve', 'sign off']
+  },
+  {
+    // 私用の連絡も対象に含めるが、仕事の重大案件よりは下に来るように控えめに減点する
+    key: 'personal',
+    weight: -20,
+    label: '私用・予定調整の話題',
+    words: ['食事会', '飲み会', '飲みに', 'ランチ', '二次会', 'お店', '予約したい', '誕生日', '旅行', '帰省', 'プレゼント', '遊び']
   },
   {
     key: 'noise',
@@ -207,6 +221,13 @@ export function scoreItem(item, now = new Date()) {
   }
 
   score += SOURCE_WEIGHT[item.source] ?? 0;
+
+  // 私用の予定調整は「今日中」などの語が入っていても最上位（緊急）には上げない。
+  // 仕事の重大な影響が絡む場合（impact）はこの抑制を外す。
+  if (signals.personal && !signals.impact && score >= LEVELS[0].min) {
+    score = LEVELS[0].min - 1;
+    reasons.push('私用のため緊急扱いにはしない');
+  }
 
   const finalScore = clamp(Math.round(score));
   const { level, label } = levelOf(finalScore);

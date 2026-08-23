@@ -83,3 +83,35 @@ test('LLM 判定が無い通知はルール判定のみで再計算される', a
   const item = baseItem({ body: 'よろしくお願いします' });
   assert.equal(rescore(item, { reasons: [] }).triagedBy, 'rules');
 });
+
+test('業務影響のある障害は私用の予定調整より上に来る', () => {
+  const incident = scoreItem(
+    baseItem({ isDirect: true, body: '本番のAPIが500を返しています。至急確認をお願いできますか？顧客からも問い合わせが来ています。' })
+  );
+  const personal = scoreItem(
+    baseItem({ source: 'messenger', isDirect: true, body: '来週の食事会、金曜と土曜どっちがいい？お店予約したいから今日中に教えて〜' })
+  );
+
+  assert.ok(incident.score > personal.score, `incident=${incident.score} personal=${personal.score}`);
+  assert.equal(incident.level, 'urgent');
+});
+
+test('私用の連絡は緊急語があっても緊急レベルにはしない', () => {
+  const result = scoreItem(
+    baseItem({
+      isDirect: true,
+      // 緊急語・期限・放置時間が重なり、本来なら緊急レベルに達する条件をそろえる
+      body: '飲み会のお店、今日中に予約したいから至急返事ちょうだい！どこがいい？',
+      receivedAt: new Date(Date.now() - 12 * 3600 * 1000).toISOString()
+    })
+  );
+  assert.notEqual(result.level, 'urgent');
+  assert.ok(result.reasons.includes('私用のため緊急扱いにはしない'), result.reasons.join(' / '));
+});
+
+test('私用の語句を含んでいても業務影響があれば緊急のままにする', () => {
+  const result = scoreItem(
+    baseItem({ isDirect: true, body: '至急です。顧客との食事会の請求で入金トラブルが起きています。本日中に確認をお願いします。' })
+  );
+  assert.equal(result.level, 'urgent');
+});
