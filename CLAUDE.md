@@ -4,38 +4,57 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a minimal Express.js backend (npm package name `get-desktop`) that proxies chat prompts to the OpenAI Chat Completions API. It was built as the server for a project referred to in-code as "COLDRAW ChatGPTサーバー" (COLDRAW ChatGPT server). The entire application currently lives in a single file, `server.js`.
+`get-desktop` は「優先度インボックス」— Slack / Gmail / Notion / Facebook Messenger の連絡を
+横断で取り込み、緊急度順に並べ、返信文案まで用意する専用アプリ（Express + 素の JS フロントエンド）です。
+もともとは OpenAI へプロンプトを中継するだけの `server.js` 1 ファイル構成（in-code 名 "COLDRAW ChatGPTサーバー"）で、
+`POST /ask` はその名残として後方互換のまま残しています。
 
 ## Commands
 
-- **Run the server**: `npm start` (runs `node server.js`)
-- **Install dependencies**: `npm install`
-- **Tests**: none configured — `npm test` is the default placeholder (`echo "Error: no test specified" && exit 1`) and will fail. There is no test framework in this repo.
-- **Lint/build**: none configured.
+- **起動**: `npm start`（`node server.js`）／`npm run dev`（`node --watch`）
+- **依存関係**: `npm install`
+- **テスト**: `npm test`（`node --test test/*.test.js`。追加のテストフレームワークは無し）
+- **Lint/build**: 設定なし
 
 ### Environment setup
 
-The server reads config via `dotenv`, so a `.env` file (gitignored) is required at the project root with at minimum:
+`dotenv` 経由で `.env` を読み込みます。`.env.example` に全項目の説明があります。
+**API キーが 1 つも無くても起動でき**、その場合は `data/sample-inbox.json` のデモデータ +
+ルールベースの優先度判定 + テンプレート文案で動作します（新機能を触るときの既定の確認方法）。
 
-```
-OPENAI_API_KEY=sk-...
-PORT=3000   # optional, defaults to 3000
-```
-
-Without `OPENAI_API_KEY`, the server still starts but every call to `POST /ask` will fail against the OpenAI API.
+`OPENAI_API_KEY` があると LLM による再判定と文案生成が有効になります。
 
 ## Architecture
 
-Everything is in `server.js`:
+```
+server.js         起動エントリ。設定サマリを出力 → 状態読込 → listen → 定期取り込み
+src/config.js     環境変数の一元管理。3 値フラグは tribool（未指定 = 自動判定）
+src/llm.js        OpenAI Chat Completions のラッパーと JSON パース
+src/sources/      コネクタ。各モジュールは { id, label, isConfigured, fetchItems, send? } を公開
+src/priority.js   ルールベースのスコアリング（0〜100）、締切抽出、並べ替え
+src/triage.js     LLM によるバッチ再判定 + 返信文案生成。失敗時はルール判定へフォールバック
+src/pipeline.js   collectAll → triage → store。同時実行は 1 本に集約、内容が変わらない通知は再判定しない
+src/store.js      通知本体と「利用者の操作（override）」を分離して保持し data/state.json に永続化
+src/api.js        /api 配下のルーター
+src/app.js        Express アプリ組み立て（/api, /health, /ask, public/ の配信）
+public/           フロントエンド。ビルド無し、依存無しの ES モジュール
+```
 
-- `GET /` — health-check route, returns a static confirmation string.
-- `POST /ask` — takes `{ prompt: string }` in the JSON body, forwards it to `https://api.openai.com/v1/chat/completions` via `axios` using model `gpt-3.5-turbo`, with a hardcoded Japanese system prompt ("あなたは日本語で丁寧に返答するアシスタントです。" — "You are an assistant that replies politely in Japanese"). The reply text is extracted from `response.data.choices[0].message.content` and returned as `{ reply }`.
-  - Returns `400` if `prompt` is missing.
-  - Returns `500` with a generic Japanese error message if the OpenAI call fails (the underlying error is only logged server-side, not sent to the client).
+構造上の要点:
 
-There is no routing/controller/service layering — if this grows, that's a structural decision to make deliberately rather than something to infer from existing patterns.
+- **ソースを追加するとき**は `src/sources/` に 1 ファイル追加し `src/sources/index.js` の `SOURCES` に登録するだけ。
+  `fetchItems()` は正規化前の素の配列を返し、`index.js` の `normalize()` が `id` の採番（`source:externalId`）と
+  既定値の補完を行う。`send()` は任意（実装すると UI に送信ボタンが出る）。
+- **利用者の操作（完了 / スヌーズ / ピン / 編集した文案）は override として通知本体とは別に保持**する。
+  取り込み直しても操作が失われないための設計なので、`store.js` を触るときはこの分離を壊さないこと。
+- **LLM は必須にしない。** 新しい機能を足すときも、キーが無い場合の振る舞いを必ず用意する。
+- 実際の送信は `ALLOW_SEND=true` のときだけ有効。既定は文案コピー運用。
 
 ## Conventions
 
-- **Logging and user-facing strings are in Japanese**, prefixed with emoji to indicate status (`✅` success, `❌` error, `⚠️` warning, `📩` incoming data, `🌐` server identity). Match this style for any new log lines or API responses in this file.
-- `package.json` does not set `"type": "module"`, even though `server.js` uses ESM `import` syntax. Node currently handles this by reparsing the file as ESM at runtime with a performance-warning (`MODULE_TYPELESS_PACKAGE_JSON`). Be aware of this when adding new `.js` files — they'll be treated the same way unless `"type": "module"` is added to `package.json`.
+- **ログと利用者向けの文字列は日本語**。状態を表す絵文字を前置する（`✅` 成功 / `❌` エラー / `⚠️` 警告 /
+  `📩` 受信データ / `🌐` サーバー情報 / `📤` 送信）。新しいログもこの形式に合わせる。
+- ESM（`package.json` に `"type": "module"`）。CommonJS の `require` は使わない。
+- 依存は `express` / `axios` / `dotenv` の 3 つのみ。フロントエンドはビルドツール無しの素の JS。
+  新しい依存を足す前に、標準機能で済まないか検討する。
+- スコアリングの重みを変えたら `npm test` の期待値（`test/priority.test.js`）も見直す。

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>優先度インボックス</title>
+    <meta name="theme-color" content="#0d1117" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">⚡</span>
+        <div>
+          <h1>優先度インボックス</h1>
+          <p class="brand-sub">Slack・メール・Notion・Messenger を緊急度順に</p>
+        </div>
+      </div>
+
+      <div class="counters" id="counters"></div>
+
+      <div class="topbar-actions">
+        <button id="notify-btn" class="ghost" title="緊急の連絡をデスクトップ通知で受け取る">🔔 通知を許可</button>
+        <button id="refresh-btn" class="primary">↻ 取り込み</button>
+      </div>
+    </header>
+
+    <div class="statusline" id="statusline"></div>
+
+    <nav class="filters">
+      <div class="filter-group" id="status-filter" data-filter="status">
+        <button class="chip active" data-value="open">未対応</button>
+        <button class="chip" data-value="done">完了</button>
+        <button class="chip" data-value="snoozed">スヌーズ中</button>
+        <button class="chip" data-value="all">すべて</button>
+      </div>
+      <div class="filter-group" id="level-filter" data-filter="level">
+        <button class="chip active" data-value="">全レベル</button>
+        <button class="chip" data-value="urgent">緊急</button>
+        <button class="chip" data-value="high">高</button>
+        <button class="chip" data-value="normal">中</button>
+        <button class="chip" data-value="low">低</button>
+      </div>
+      <div class="filter-group" id="source-filter" data-filter="source"></div>
+      <input id="search" type="search" placeholder="キーワードで絞り込み（/）" />
+    </nav>
+
+    <main id="list" class="list" aria-live="polite"></main>
+
+    <footer class="hints">
+      <span><kbd>J</kbd>/<kbd>K</kbd> 移動</span>
+      <span><kbd>Enter</kbd> 開閉</span>
+      <span><kbd>C</kbd> 文案をコピー</span>
+      <span><kbd>E</kbd> 完了</span>
+      <span><kbd>S</kbd> 1時間スヌーズ</span>
+      <span><kbd>R</kbd> 取り込み</span>
+      <span><kbd>/</kbd> 検索</span>
+    </footer>
+
+    <div id="toast" class="toast" hidden></div>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

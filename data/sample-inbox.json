@@ -1,0 +1,111 @@
+{
+  "note": "デモ用のサンプル受信データ。receivedMinutesAgo は起動時刻からの相対分数に変換されます。",
+  "items": [
+    {
+      "externalId": "demo-slack-1",
+      "source": "slack",
+      "sourceLabel": "Slack",
+      "channel": "#プロジェクト-coldraw",
+      "subject": "リリース判定の承認待ち",
+      "from": { "name": "田中 部長", "handle": "@tanaka" },
+      "body": "@you お疲れさまです。本日中にリリース判定の承認をいただけますか？17時の役員会で報告する必要があるため、それまでにご返信をお願いします。",
+      "isDirect": false,
+      "mentionsMe": true,
+      "participantCount": 12,
+      "permalink": "https://example.slack.com/archives/C0001/p1",
+      "receivedMinutesAgo": 95
+    },
+    {
+      "externalId": "demo-gmail-1",
+      "source": "gmail",
+      "sourceLabel": "Gmail",
+      "channel": "受信トレイ",
+      "subject": "【再送】請求書の内容確認のお願い",
+      "from": { "name": "株式会社ミライ 佐藤", "handle": "sato@mirai.example.com", "email": "sato@mirai.example.com" },
+      "body": "お世話になっております。先週お送りした請求書の件、まだご回答をいただけておりません。締切が 明日 のため、恐れ入りますがご確認のうえご返信いただけますでしょうか。",
+      "isDirect": true,
+      "participantCount": 2,
+      "permalink": "https://mail.google.com/mail/u/0/#inbox/demo1",
+      "receivedMinutesAgo": 2600
+    },
+    {
+      "externalId": "demo-messenger-1",
+      "source": "messenger",
+      "sourceLabel": "Messenger",
+      "channel": "個人チャット",
+      "subject": "",
+      "from": { "name": "山田 花子", "handle": "hanako.yamada" },
+      "body": "来週の食事会、金曜と土曜どっちがいい？お店予約したいから今日中に教えて〜",
+      "isDirect": true,
+      "participantCount": 2,
+      "permalink": "https://www.messenger.com/t/demo1",
+      "receivedMinutesAgo": 320
+    },
+    {
+      "externalId": "demo-slack-2",
+      "source": "slack",
+      "sourceLabel": "Slack",
+      "channel": "DM: 鈴木",
+      "subject": "",
+      "from": { "name": "鈴木 エンジニア", "handle": "@suzuki" },
+      "body": "本番のAPIが 500 を返し始めています。至急確認をお願いできますか？顧客からも問い合わせが来ています。",
+      "isDirect": true,
+      "participantCount": 2,
+      "permalink": "https://example.slack.com/archives/D0002/p1",
+      "receivedMinutesAgo": 18
+    },
+    {
+      "externalId": "demo-notion-1",
+      "source": "notion",
+      "sourceLabel": "Notion",
+      "channel": "2026年 事業計画 / コメント",
+      "subject": "コメント: 予算の前提について",
+      "from": { "name": "高橋 CFO", "handle": "takahashi" },
+      "body": "@you このセクションの数値、前提が去年のままに見えます。今週中に更新版をいただけますか？",
+      "isDirect": false,
+      "mentionsMe": true,
+      "participantCount": 4,
+      "permalink": "https://www.notion.so/demo-page",
+      "receivedMinutesAgo": 1450
+    },
+    {
+      "externalId": "demo-gmail-2",
+      "source": "gmail",
+      "sourceLabel": "Gmail",
+      "channel": "受信トレイ",
+      "subject": "週刊テックニュース vol.312",
+      "from": { "name": "Tech Weekly", "handle": "no-reply@techweekly.example.com", "email": "no-reply@techweekly.example.com" },
+      "body": "今週の注目記事をお届けします。配信停止はこちら。このメールは送信専用アドレスから配信されています。",
+      "isDirect": false,
+      "participantCount": 1,
+      "permalink": "https://mail.google.com/mail/u/0/#inbox/demo2",
+      "receivedMinutesAgo": 400
+    },
+    {
+      "externalId": "demo-slack-3",
+      "source": "slack",
+      "sourceLabel": "Slack",
+      "channel": "#general",
+      "subject": "",
+      "from": { "name": "総務 井上", "handle": "@inoue" },
+      "body": "来月の全社会議の日程が確定しました。詳細は社内Wikiをご覧ください。",
+      "isDirect": false,
+      "participantCount": 87,
+      "permalink": "https://example.slack.com/archives/C0003/p1",
+      "receivedMinutesAgo": 240
+    },
+    {
+      "externalId": "demo-gmail-3",
+      "source": "gmail",
+      "sourceLabel": "Gmail",
+      "channel": "受信トレイ",
+      "subject": "Re: 契約書ドラフトの件",
+      "from": { "name": "法務 中村", "handle": "nakamura@example.com", "email": "nakamura@example.com" },
+      "body": "ドラフトを送付いたしました。ご確認のうえ、修正点があれば 12/5 までにご連絡ください。",
+      "isDirect": true,
+      "participantCount": 3,
+      "permalink": "https://mail.google.com/mail/u/0/#inbox/demo3",
+      "receivedMinutesAgo": 700
+    }
+  ]
+}
