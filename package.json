@@ -1,10 +1,11 @@
 {
   "name": "get-desktop",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test test/*.test.js"
   },
   "keywords": [],
   "author": "",
@@ -22,5 +23,6 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0"
   },
-  "description": ""
+  "description": "優先度順に並ぶ通知インボックス（Slack / Gmail / Notion / Messenger の連絡を緊急度順に並べ、返信文案まで自動生成する専用アプリ）",
+  "type": "module"
 }
