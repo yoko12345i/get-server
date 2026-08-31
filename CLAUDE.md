@@ -38,6 +38,7 @@ src/store.js      通知本体と「利用者の操作（override）」を分離
 src/api.js        /api 配下のルーター
 src/app.js        Express アプリ組み立て（/api, /health, /ask, public/ の配信）
 public/           フロントエンド。ビルド無し、依存無しの ES モジュール
+public/dining/    別プロトタイプ（Executive Dining Network）。`/dining/` で配信
 ```
 
 構造上の要点:
@@ -49,6 +50,28 @@ public/           フロントエンド。ビルド無し、依存無しの ES �
   取り込み直しても操作が失われないための設計なので、`store.js` を触るときはこの分離を壊さないこと。
 - **LLM は必須にしない。** 新しい機能を足すときも、キーが無い場合の振る舞いを必ず用意する。
 - 実際の送信は `ALLOW_SEND=true` のときだけ有効。既定は文案コピー運用。
+
+### Prototype (`public/dining/`)
+
+A mobile-first hash-routed SPA for the COLDRAW Executive Dining Network, served at `/dining/`
+by the same `public/` static mount as the inbox app — it needs no route of its own. Separate
+from the inbox app in every other respect: no build step, no dependencies, no server state, and
+it never calls `/api` or `POST /ask`, so it works without any API key. See `PROTOTYPE.md` for
+the screen map, the KPI it exists to measure, and the self-evaluation.
+
+- `public/dining/js/data.js` — fictional restaurant fixtures, matching, constraint assessment.
+- `public/dining/js/art.js` — procedural SVG imagery (no photographs of real places).
+- `public/dining/js/store.js` — localStorage state and event instrumentation.
+- `public/dining/js/app.js` — router and all screens.
+
+Two rules to preserve when editing it:
+
+1. **Disclosure, not certification.** COLDRAW may state verified facts only about its own Nature
+   Packs / Nature Cocktails (`kind: 'coldraw'`). Anything about a restaurant's own menu is
+   `kind: 'reported'` and is shown dated. Never add copy that certifies a restaurant as vegan,
+   halal or allergen-free.
+2. **All venue data is fictional and must stay that way** — no unverified claims about real
+   restaurants or chefs.
 
 ## Conventions
 
