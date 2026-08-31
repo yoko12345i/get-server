@@ -1,0 +1,13 @@
+{
+  "name": "優先度インボックス",
+  "short_name": "Inbox",
+  "description": "Slack・メール・Notion・Messenger の連絡を緊急度順に並べ、返信文案まで用意する専用アプリ",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
