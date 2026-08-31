@@ -16,6 +16,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **テスト**: `npm test`（`node --test test/*.test.js`。追加のテストフレームワークは無し）
 - **Lint/build**: 設定なし
 
+この環境で確認済みのツールチェーン: Node 22, npm 10。依存の実インストール版は `express@5.1.0` /
+`axios@1.9.0` / `dotenv@16.5.0`。
+
 ### Environment setup
 
 `dotenv` 経由で `.env` を読み込みます。`.env.example` に全項目の説明があります。
@@ -58,3 +61,13 @@ public/           フロントエンド。ビルド無し、依存無しの ES �
 - 依存は `express` / `axios` / `dotenv` の 3 つのみ。フロントエンドはビルドツール無しの素の JS。
   新しい依存を足す前に、標準機能で済まないか検討する。
 - スコアリングの重みを変えたら `npm test` の期待値（`test/priority.test.js`）も見直す。
+
+## Repository state gotchas
+
+既知の状態。驚かないための記載であって、無関係な作業のついでに直すものではない（隣接コードを触るときは利用者に伝えること）。
+
+- **`node_modules/` が git に登録されている** — 784 ファイルが追跡対象。`.gitignore` にも入っていないため、
+  `npm install` のあとは `git status` と diff がそのぶん騒がしくなる。
+- **`.env.example` は存在せず、作っても `.gitignore` の `.env.*` に一致して無視される**
+  （`git check-ignore .env.example` が一致を返す）。環境変数の一覧は実質 `src/config.js` が唯一の情報源なので、
+  項目を増やしたらそこを読めば分かる状態を保つこと。
